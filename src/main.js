@@ -12,6 +12,23 @@
         // clear speaking lady before loading the page
         speechSynthesis.cancel();
 
+        document.addEventListener('click', () => {
+            let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
+            if(selectedTextObject.text) {
+                onTextSelection();
+            } else {
+                onTextNotSelected();
+            }
+        });
+        document.addEventListener('dblclick', () => {
+            let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
+            if(selectedTextObject.text) {
+                onTextSelection();
+            } else {
+                onTextNotSelected();
+            }
+        });
+
         // addeventlisners
         playButton.addEventListener('mousedown', event => speakLady(event));
         pauseButton.addEventListener('mousedown', event => pauseLady(event));
@@ -19,6 +36,20 @@
         resumeButton.addEventListener('mousedown', event => resumeLady(event));
         copyButton.addEventListener('mousedown', event => copySelectedData(event, 'targetField'));
     })();
+
+    // event when text is selected
+    let onTextSelection = () => {
+        actionButtons = document.getElementsByClassName('action-buttons');
+        if(actionButtons && actionButtons[0])
+            actionButtons[0].style.visibility = "visible";
+    }
+
+    // event when text is selected
+    let onTextNotSelected = () => {
+        actionButtons = document.getElementsByClassName('action-buttons');
+        if(actionButtons && actionButtons[0])
+            actionButtons[0].style.visibility = "hidden";
+    }
 
     // confirm before reloading the page
     window.onbeforeunload = () => {
@@ -38,9 +69,9 @@
     let speakLady = e => {
         e = e || window.event;
         e.preventDefault();
-        let textObject = new SpeechSynthesisUtterance(selectedText);
-        if(textObject.text) {
-            speechSynthesis.speak(textObject);
+        let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
+        if(selectedTextObject.text) {
+            speechSynthesis.speak(selectedTextObject);
 
             manageSpeechButtons({
                 'playBtn': "none",
@@ -51,7 +82,7 @@
         }
 
         // addeventlistner on completing the text speech
-        textObject.onend = () => {
+        selectedTextObject.onend = () => {
             manageSpeechButtons({
                 'playBtn': "unset",
                 'pauseBtn': "none",
@@ -139,4 +170,9 @@
             elem.removeChild(titleUpper);
             elem.removeChild(titleSpan);
         }, 2000);        
+    }
+
+// Alert Related functions
+    let showAlert = action => {
+        
     }

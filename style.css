@@ -25,6 +25,49 @@
     padding: 4px 6px;
 }
 
-#app>div {
+.action-buttons {
     margin-top: 20px;
+    visibility: hidden;
+}
+
+.uv-alert-collection {
+    position: fixed;
+    right: 0px;
+    width: 310px;
+    top: 5px;
+    z-index: 10000;
+}
+.uv-alert {
+    opacity: 1;
+    display: none;
+    padding-right: 35px;
+    padding: 20px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+.uv-alert span {
+    position: relative;
+    top: -2px;
+    color: inherit;
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .2;
+    background-color: transparent;
+    cursor: pointer;
+}
+.success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }
