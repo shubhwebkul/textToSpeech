@@ -12,13 +12,17 @@
         // clear speaking lady before loading the page
         speechSynthesis.cancel();
 
-        document.addEventListener('click', () => {
+        document.addEventListener('click', event => {
             let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
             if(selectedTextObject.text) {
                 onTextSelection();
             } else {
                 onTextNotSelected();
             }
+            
+            event = event || window.target;
+            if(event.target.className.includes('close-alert'))
+                closeAlert({'event': event, 'action': 'success'})
         });
         document.addEventListener('dblclick', () => {
             let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
@@ -79,6 +83,7 @@
                 'stopBtn': "unset",
                 'resumeBtn': "none",
             })
+            showAlert({'action': 'success', message: "Playing"});
         }
 
         // addeventlistner on completing the text speech
@@ -89,6 +94,7 @@
                 'stopBtn': "none",
                 'resumeBtn': "none",
             })
+            showAlert({'action': 'success', message: "Completed"});
         }
     };
 
@@ -103,6 +109,7 @@
             'stopBtn': "none",
             'resumeBtn': "none",
         })
+        showAlert({'action': 'error', message: "You stopped TextToSpeech"});
 
         speechSynthesis.cancel();
     };
@@ -118,6 +125,7 @@
             'stopBtn': "unset",
             'resumeBtn': "unset",
         })
+        showAlert({'action': 'success', message: "You just paused textToSpeech"});
         
         speechSynthesis.pause();
     };
@@ -133,6 +141,7 @@
             'stopBtn': "unset",
             'resumeBtn': "none",
         })
+        showAlert({'action': 'success', message: "textToSpeech started again"});
 
         speechSynthesis.resume();
     };
@@ -152,27 +161,102 @@
             document.execCommand('copy');
             targetField.removeChild(textArea);
 
-            addTitleToElem({elem: copyButton, msg: 'copied'});
+            // addTitleToElem({elem: copyButton, msg: 'copied', time: 2000});
+            showAlert({'action': 'success', message: "Text Copied"});
         }
     }
 
-    let addTitleToElem = ({elem, msg}) => {
-        let titleUpper = document.createElement('span');
-        titleUpper.classList.add('title-upper');
-        let titleSpan = document.createElement('span');
-        titleSpan.classList.add('title-msg');
-        titleSpan.innerHTML = msg;
+    // let addTitleToElem = ({elem, msg, time}) => {
+    //     time = time || 2000;
+    //     let titleUpper = document.createElement('span');
+    //     titleUpper.classList.add('title-upper');
+    //     let titleSpan = document.createElement('span');
+    //     titleSpan.classList.add('title-msg');
+    //     titleSpan.innerHTML = msg;
 
-        elem.appendChild(titleUpper);
-        elem.appendChild(titleSpan);
+    //     elem.appendChild(titleUpper);
+    //     elem.appendChild(titleSpan);
 
-        setTimeout(() => {
-            elem.removeChild(titleUpper);
-            elem.removeChild(titleSpan);
-        }, 2000);        
-    }
+    //     setTimeout(() => {
+    //         elem.removeChild(titleUpper);
+    //         elem.removeChild(titleSpan);
+    //     }, time);
+    // }
 
 // Alert Related functions
-    let showAlert = action => {
+    let showAlert = ({action, time, message}) => {
+        time = time || 4000;
+        let alertId = createAlertElement(action);
+        let targetElementCollection = document.getElementsByClassName(action);
+        let targetElementArrayCollection = Array.prototype.slice.call( targetElementCollection );
+
+        if(targetElementArrayCollection) {
+            targetElementArrayCollection.forEach(element => {
+                if(element.alertId == alertId) {
+                    element.innerHTML += message;
+                    element.style.display = "block";
+
+                    setTimeout(() => {
+                        element.parentNode.removeChild(element);
+                    }, time);
+                }
+            })
+        }
+    }
+
+    let closeAlert = ({event, action}) => {
+        event = event || window.event;
+        let successElementCollection = document.getElementsByClassName('success');
+        let errorElementCollection = document.getElementsByClassName('error');
+        let successElementArrayCollection = Array.prototype.slice.call( successElementCollection )
+        let errorElementArrayCollection = Array.prototype.slice.call( errorElementCollection )
+
+        let elementArrayCollection = successElementArrayCollection.concat(errorElementArrayCollection);
+
+        let targetElement = elementArrayCollection.filter(element => {
+            if(element.alertId == event.target.parentNode.parentNode.alertId)
+                return true;
+            return false;
+        })
+
+        if(targetElement && targetElement[0])
+            targetElement[0].style.display = "none";
+
+    }
+
+    let createAlertElement = createElementFor => {
+        let body = document.getElementsByTagName('body')[0];
+        let mainContainer = document.getElementsByClassName('alert-collection');
+
+        if(!(mainContainer && mainContainer[0])) {
+            mainContainer = document.createElement('div');
+            mainContainer.classList.add('alert-collection')
+        } else {
+            mainContainer = mainContainer[0];
+        }
+
+        let innerContainer = document.createElement('div');
+        innerContainer.classList.add('alert');
+        innerContainer.classList.add(createElementFor);
+        innerContainer.id = createElementFor;
+        let alertId = Math.round(Math.random()*10000);
+        innerContainer.alertId = alertId;
+
+        let alertDefaultText = document.createElement('strong');
+        alertDefaultText.innerHTML = createElementFor + ' ! ';
+        alertDefaultText.style.textTransform = 'capitalize';
+
+        let span = document.createElement('span');
+        let crossIcon = document.createElement('i');
+        crossIcon.className = "fa fa-close close-alert";
+        crossIcon.style = "font-size:20px";
+        span.appendChild(crossIcon);
         
+        
+        innerContainer.appendChild(span);
+        innerContainer.appendChild(alertDefaultText);
+        mainContainer.appendChild(innerContainer);
+        body.appendChild(mainContainer);
+        
+        return alertId;
     }
