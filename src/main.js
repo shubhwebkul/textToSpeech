@@ -161,27 +161,9 @@
             document.execCommand('copy');
             targetField.removeChild(textArea);
 
-            // addTitleToElem({elem: copyButton, msg: 'copied', time: 2000});
             showAlert({'action': 'success', message: "Text Copied"});
         }
     }
-
-    // let addTitleToElem = ({elem, msg, time}) => {
-    //     time = time || 2000;
-    //     let titleUpper = document.createElement('span');
-    //     titleUpper.classList.add('title-upper');
-    //     let titleSpan = document.createElement('span');
-    //     titleSpan.classList.add('title-msg');
-    //     titleSpan.innerHTML = msg;
-
-    //     elem.appendChild(titleUpper);
-    //     elem.appendChild(titleSpan);
-
-    //     setTimeout(() => {
-    //         elem.removeChild(titleUpper);
-    //         elem.removeChild(titleSpan);
-    //     }, time);
-    // }
 
 // Alert Related functions
     let showAlert = ({action, time, message}) => {
