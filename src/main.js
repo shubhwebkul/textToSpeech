@@ -13,6 +13,9 @@
         speechSynthesis.cancel();
 
         document.addEventListener('click', event => {
+            event = event || window.target;
+            event.preventDefault();
+
             let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
             if(selectedTextObject.text) {
                 onTextSelection();
@@ -20,11 +23,13 @@
                 onTextNotSelected();
             }
             
-            event = event || window.target;
             if(event.target.className.includes('close-alert'))
                 closeAlert({'event': event, 'action': 'success'})
         });
-        document.addEventListener('dblclick', () => {
+        document.addEventListener('dblclick', event => {
+            event = event || window.target;
+            event.preventDefault();
+
             let selectedTextObject = new SpeechSynthesisUtterance(selectedText);
             if(selectedTextObject.text) {
                 onTextSelection();
@@ -83,7 +88,7 @@
                 'stopBtn': "unset",
                 'resumeBtn': "none",
             })
-            showAlert({'action': 'success', message: "Playing"});
+            showAlert({'action': 'success', message: "Playing", isRemove: true});
         }
 
         // addeventlistner on completing the text speech
@@ -94,7 +99,7 @@
                 'stopBtn': "none",
                 'resumeBtn': "none",
             })
-            showAlert({'action': 'success', message: "Completed"});
+            showAlert({'action': 'success', message: "Completed", isRemove: true});
         }
     };
 
@@ -109,7 +114,7 @@
             'stopBtn': "none",
             'resumeBtn': "none",
         })
-        showAlert({'action': 'error', message: "You stopped TextToSpeech"});
+        showAlert({'action': 'error', message: "You stopped TextToSpeech", isRemove: true});
 
         speechSynthesis.cancel();
     };
@@ -125,7 +130,7 @@
             'stopBtn': "unset",
             'resumeBtn': "unset",
         })
-        showAlert({'action': 'success', message: "You just paused textToSpeech"});
+        showAlert({'action': 'success', message: "You just paused textToSpeech", isRemove: true});
         
         speechSynthesis.pause();
     };
@@ -141,7 +146,7 @@
             'stopBtn': "unset",
             'resumeBtn': "none",
         })
-        showAlert({'action': 'success', message: "textToSpeech started again"});
+        showAlert({'action': 'success', message: "textToSpeech started again", isRemove: true});
 
         speechSynthesis.resume();
     };
@@ -161,14 +166,16 @@
             document.execCommand('copy');
             targetField.removeChild(textArea);
 
-            showAlert({'action': 'success', message: "Text Copied"});
+            // addTitleToElem({elem: copyButton, msg: 'copied', time: 2000});
+            showAlert({'action': 'success', message: "Text Copied", isRemove: true});
         }
     }
 
 // Alert Related functions
-    let showAlert = ({action, time, message}) => {
+    let showAlert = ({action, time, message, isRemove}) => {
         time = time || 4000;
-        let alertId = createAlertElement(action);
+        isRemove = isRemove || false;
+        let alertId = createAlertElement({createElementFor: action, isRemove: isRemove});
         let targetElementCollection = document.getElementsByClassName(action);
         let targetElementArrayCollection = Array.prototype.slice.call( targetElementCollection );
 
@@ -206,7 +213,7 @@
 
     }
 
-    let createAlertElement = createElementFor => {
+    let createAlertElement = ({createElementFor, isRemove}) => {
         let body = document.getElementsByTagName('body')[0];
         let mainContainer = document.getElementsByClassName('alert-collection');
 
@@ -216,6 +223,8 @@
         } else {
             mainContainer = mainContainer[0];
         }
+
+        isRemove ? mainContainer.innerHTML = '' : '';
 
         let innerContainer = document.createElement('div');
         innerContainer.classList.add('alert');
