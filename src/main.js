@@ -1,11 +1,40 @@
 // default values
     var selectedText = window.getSelection();
     var speechSynthesis = window.speechSynthesis;
-    var playButton = document.getElementById('play');
-    var pauseButton = document.getElementById('pause');
-    var stopButton = document.getElementById('stop');
-    var resumeButton = document.getElementById('resume');
-    var copyButton = document.getElementById('copy');
+
+    let createActionElement = ({id, classes, style, title}) => {
+        let createdElement = document.createElement('i');
+
+        createdElement.id = id;
+        createdElement.title = title;
+        createdElement.style = style;
+        createdElement.className = classes;
+
+        return createdElement;
+    }
+
+    window.onload = () => {
+        let actionButtons = document.getElementById('action-buttons');
+
+        var playButton = document.playButton = createActionElement({id: 'play', classes:'fa fa-play', style: 'font-size:24px;cursor: pointer;', title: 'play'})
+        var pauseButton = document.pauseButton = createActionElement({id: 'pause', classes:'fa fa-pause', style: 'font-size:24px;cursor: pointer;display:none;', title: 'pause'})
+        var stopButton = document.stopButton = createActionElement({id: 'stop', classes:'fa fa-stop', style: 'font-size:24px;cursor: pointer;display:none;', title: 'stop'})
+        var resumeButton = document.resumeButton = createActionElement({id: 'resume', classes:'fa fa-play-circle', style: 'font-size:24px;cursor: pointer;display:none;', title: 'resume'})
+        var copyButton = document.copyButton = createActionElement({id: 'copy', classes:'fa fa-copy', style: 'font-size:24px;cursor: pointer;', title: 'copy'})
+
+        actionButtons.appendChild(playButton);
+        actionButtons.appendChild(pauseButton);
+        actionButtons.appendChild(stopButton);
+        actionButtons.appendChild(resumeButton);
+        actionButtons.appendChild(copyButton);
+
+        // addeventlisners
+        playButton.addEventListener('mousedown', event => speakLady(event));
+        pauseButton.addEventListener('mousedown', event => pauseLady(event));
+        stopButton.addEventListener('mousedown', event => stopLady(event));
+        resumeButton.addEventListener('mousedown', event => resumeLady(event));
+        copyButton.addEventListener('mousedown', event => copySelectedData(event, 'targetField'));
+    };
 
     // self invoking function(will execute on window load)
     (() => {
@@ -26,6 +55,7 @@
             if(event.target.className.includes('close-alert'))
                 closeAlert({'event': event, 'action': 'success'})
         });
+
         document.addEventListener('dblclick', event => {
             event = event || window.target;
             event.preventDefault();
@@ -37,27 +67,20 @@
                 onTextNotSelected();
             }
         });
-
-        // addeventlisners
-        playButton.addEventListener('mousedown', event => speakLady(event));
-        pauseButton.addEventListener('mousedown', event => pauseLady(event));
-        stopButton.addEventListener('mousedown', event => stopLady(event));
-        resumeButton.addEventListener('mousedown', event => resumeLady(event));
-        copyButton.addEventListener('mousedown', event => copySelectedData(event, 'targetField'));
     })();
 
     // event when text is selected
     let onTextSelection = () => {
-        actionButtons = document.getElementsByClassName('action-buttons');
-        if(actionButtons && actionButtons[0])
-            actionButtons[0].style.visibility = "visible";
+        actionButtonCollection = document.getElementById('action-buttons');
+        if(actionButtonCollection)
+            actionButtonCollection.style.visibility = "visible";
     }
 
     // event when text is selected
     let onTextNotSelected = () => {
-        actionButtons = document.getElementsByClassName('action-buttons');
-        if(actionButtons && actionButtons[0])
-            actionButtons[0].style.visibility = "hidden";
+        actionButtonCollection = document.getElementById('action-buttons');
+        if(actionButtonCollection)
+            actionButtonCollection.style.visibility = "hidden";
     }
 
     // confirm before reloading the page
@@ -67,10 +90,10 @@
 
     // show and hide buttons using this function
     let manageSpeechButtons = ({playBtn, pauseBtn, stopBtn, resumeBtn}) => {
-        playButton.style.display = playBtn;
-        pauseButton.style.display = pauseBtn;
-        stopButton.style.display = stopBtn;
-        resumeButton.style.display = resumeBtn;
+        document.playButton.style.display = playBtn;
+        document.pauseButton.style.display = pauseBtn;
+        document.stopButton.style.display = stopBtn;
+        document.resumeButton.style.display = resumeBtn;
     }
 
 // TextToSpeech related functions
@@ -186,7 +209,9 @@
                     element.style.display = "block";
 
                     setTimeout(() => {
-                        element.parentNode.removeChild(element);
+                        if(element && element.parentNode) {
+                            element.parentNode.removeChild(element);
+                        }
                     }, time);
                 }
             })
@@ -251,3 +276,5 @@
         
         return alertId;
     }
+
+// create element

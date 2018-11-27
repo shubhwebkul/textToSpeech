@@ -25,9 +25,13 @@
     padding: 4px 6px;
 }
 
-.action-buttons {
+#action-buttons {
     margin-top: 20px;
     visibility: hidden;
+}
+
+#action-buttons i {
+    margin-left: 5px;
 }
 
 .alert-collection {
