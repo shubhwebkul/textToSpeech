@@ -52,8 +52,9 @@
                 onTextNotSelected();
             }
             
-            if(event.target.className.includes('close-alert'))
+            if(event.target.className.includes('close-alert')) {
                 closeAlert({'event': event, 'action': 'success'})
+            }
         });
 
         document.addEventListener('dblclick', event => {
@@ -67,6 +68,14 @@
                 onTextNotSelected();
             }
         });
+
+        // load css file
+        let linkElement = document.createElement('link');
+        linkElement.href = "http://localhost/JS/textToSpeech/dist/style.css";
+        linkElement.rel = "stylesheet";
+
+        let headElement = document.querySelector('head');
+        headElement.appendChild(linkElement);
     })();
 
     // event when text is selected
@@ -189,7 +198,6 @@
             document.execCommand('copy');
             targetField.removeChild(textArea);
 
-            // addTitleToElem({elem: copyButton, msg: 'copied', time: 2000});
             showAlert({'action': 'success', message: "Text Copied", isRemove: true});
         }
     }
@@ -220,6 +228,8 @@
 
     let closeAlert = ({event, action}) => {
         event = event || window.event;
+        event.preventDefault();
+
         let successElementCollection = document.getElementsByClassName('success');
         let errorElementCollection = document.getElementsByClassName('error');
         let successElementArrayCollection = Array.prototype.slice.call( successElementCollection )
@@ -268,7 +278,6 @@
         crossIcon.style = "font-size:20px";
         span.appendChild(crossIcon);
         
-        
         innerContainer.appendChild(span);
         innerContainer.appendChild(alertDefaultText);
         mainContainer.appendChild(innerContainer);
@@ -276,5 +285,3 @@
         
         return alertId;
     }
-
-// create element
