@@ -13,8 +13,26 @@
         return createdElement;
     }
 
+    let addImportantTags = () => {
+        let actionButtonsDiv = document.createElement('div');
+        let actionButtonsPointer = document.createElement('i');
+        let actionButtonsSpan = document.createElement('span');
+
+        actionButtonsDiv.id = 'action-buttons';
+        actionButtonsPointer.id = 'text-pointer';
+        actionButtonsSpan.id = 'action-buttons-span';
+
+        let body = document.querySelector('body');
+
+        actionButtonsDiv.appendChild(actionButtonsSpan);
+        actionButtonsDiv.appendChild(actionButtonsPointer);
+
+        body.appendChild(actionButtonsDiv);
+    }
+
     window.onload = () => {
-        let actionButtons = document.getElementById('action-buttons');
+        addImportantTags();
+        let actionButtonsSpan = document.getElementById('action-buttons-span');
 
         var playButton = document.playButton = createActionElement({id: 'play', classes:'fa fa-play', style: 'font-size:24px;cursor: pointer;', title: 'play'})
         var pauseButton = document.pauseButton = createActionElement({id: 'pause', classes:'fa fa-pause', style: 'font-size:24px;cursor: pointer;display:none;', title: 'pause'})
@@ -22,11 +40,11 @@
         var resumeButton = document.resumeButton = createActionElement({id: 'resume', classes:'fa fa-play-circle', style: 'font-size:24px;cursor: pointer;display:none;', title: 'resume'})
         var copyButton = document.copyButton = createActionElement({id: 'copy', classes:'fa fa-copy', style: 'font-size:24px;cursor: pointer;', title: 'copy'})
 
-        actionButtons.appendChild(playButton);
-        actionButtons.appendChild(pauseButton);
-        actionButtons.appendChild(stopButton);
-        actionButtons.appendChild(resumeButton);
-        actionButtons.appendChild(copyButton);
+        actionButtonsSpan.appendChild(playButton);
+        actionButtonsSpan.appendChild(pauseButton);
+        actionButtonsSpan.appendChild(stopButton);
+        actionButtonsSpan.appendChild(resumeButton);
+        actionButtonsSpan.appendChild(copyButton);
 
         // addeventlisners
         playButton.addEventListener('mousedown', event => speakLady(event));
@@ -38,6 +56,7 @@
 
     // self invoking function(will execute on window load)
     (() => {
+        let displayButtons = document.getElementById('action-buttons');
         // clear speaking lady before loading the page
         speechSynthesis.cancel();
 
@@ -70,26 +89,40 @@
         });
 
         // load css file
-        let linkElement = document.createElement('link');
-        linkElement.href = "http://localhost/JS/textToSpeech/dist/style.css";
-        linkElement.rel = "stylesheet";
-
         let headElement = document.querySelector('head');
-        headElement.appendChild(linkElement);
+        let customStyleSheet = document.createElement('link');
+        let fontAwesomeStyleSheet = document.createElement('link');
+
+        fontAwesomeStyleSheet.rel = customStyleSheet.rel = "stylesheet";
+        customStyleSheet.href = "http://localhost/JS/textToSpeech/dist/style.css";
+        fontAwesomeStyleSheet.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+        
+        headElement.appendChild(customStyleSheet);
+        headElement.appendChild(fontAwesomeStyleSheet);
     })();
 
     // event when text is selected
     let onTextSelection = () => {
+        windowSelection = window.getSelection();
+        windowSelectionRange = windowSelection.getRangeAt(0); //get the text range
+        windowSelectionPosition = windowSelectionRange.getBoundingClientRect();
+
         actionButtonCollection = document.getElementById('action-buttons');
-        if(actionButtonCollection)
-            actionButtonCollection.style.visibility = "visible";
+        if(actionButtonCollection) {
+            actionButtonCollection.style.display = "unset";
+            actionButtonCollection.style.left = windowSelectionPosition.left + "px";
+            actionButtonCollection.style.top = (windowSelectionPosition.top - 60) + "px";
+        }
     }
 
     // event when text is selected
     let onTextNotSelected = () => {
         actionButtonCollection = document.getElementById('action-buttons');
-        if(actionButtonCollection)
-            actionButtonCollection.style.visibility = "hidden";
+        if(actionButtonCollection) {
+            // stop speech if user deselects text
+            speechSynthesis.cancel();
+            actionButtonCollection.style.display = "none";
+        }
     }
 
     // confirm before reloading the page
@@ -187,6 +220,10 @@
     let copySelectedData = (e, id) => {
         e = e || window.event;
         e.preventDefault();
+
+        // stop speech if user selects to copy data
+        speechSynthesis.cancel();
+
         if(selectedText.type !== "None") {
             let targetField = document.getElementById(id);
             
