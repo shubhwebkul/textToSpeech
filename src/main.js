@@ -109,9 +109,11 @@
 
         actionButtonCollection = document.getElementById('action-buttons');
         if(actionButtonCollection) {
+            let leftShift = (windowSelectionPosition.left >= 60) ? (windowSelectionPosition.left - 60) : windowSelectionPosition.left;
+            let topShift = (windowSelectionPosition.top >= 60) ? (windowSelectionPosition.top - 60) : windowSelectionPosition.top;
             actionButtonCollection.style.display = "unset";
-            actionButtonCollection.style.left = windowSelectionPosition.left + "px";
-            actionButtonCollection.style.top = (windowSelectionPosition.top - 60) + "px";
+            actionButtonCollection.style.left = leftShift + "px";
+            actionButtonCollection.style.top = topShift + "px";
         }
     }
 
