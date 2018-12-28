@@ -34,16 +34,20 @@
         addImportantTags();
         let actionButtonsSpan = document.getElementById('action-buttons-span');
 
-        var playButton = document.playButton = createActionElement({id: 'play', classes:'fa fa-play', style: 'font-size:24px;cursor: pointer;', title: 'play'})
-        var pauseButton = document.pauseButton = createActionElement({id: 'pause', classes:'fa fa-pause', style: 'font-size:24px;cursor: pointer;display:none;', title: 'pause'})
-        var stopButton = document.stopButton = createActionElement({id: 'stop', classes:'fa fa-stop', style: 'font-size:24px;cursor: pointer;display:none;', title: 'stop'})
-        var resumeButton = document.resumeButton = createActionElement({id: 'resume', classes:'fa fa-play-circle', style: 'font-size:24px;cursor: pointer;display:none;', title: 'resume'})
-        var copyButton = document.copyButton = createActionElement({id: 'copy', classes:'fa fa-copy', style: 'font-size:24px;cursor: pointer;', title: 'copy'})
+        var playButton = document.playButton = createActionElement({id: 'play', classes:'fa fa-play', style: 'font-size:24px;cursor: pointer;padding-right: 10px;', title: 'play'})
+        var pauseButton = document.pauseButton = createActionElement({id: 'pause', classes:'fa fa-pause', style: 'font-size:24px;cursor: pointer;padding-right: 10px;display:none;', title: 'pause'})
+        var stopButton = document.stopButton = createActionElement({id: 'stop', classes:'fa fa-stop', style: 'font-size:24px;cursor: pointer;padding-right: 10px;display:none;', title: 'stop'})
+        var resumeButton = document.resumeButton = createActionElement({id: 'resume', classes:'fa fa-play-circle', style: 'font-size:24px;cursor: pointer;padding-right: 10px;display:none;', title: 'resume'})
+        var copyButton = document.copyButton = createActionElement({id: 'copy', classes:'fa fa-copy', style: 'font-size:24px;cursor: pointer;padding-right: 10px;', title: 'copy'})
+
+        var dividerButton = document.createElement('div');
+        dividerButton.id = "divider";
 
         actionButtonsSpan.appendChild(playButton);
         actionButtonsSpan.appendChild(pauseButton);
         actionButtonsSpan.appendChild(stopButton);
         actionButtonsSpan.appendChild(resumeButton);
+        actionButtonsSpan.appendChild(dividerButton);
         actionButtonsSpan.appendChild(copyButton);
 
         // addeventlisners
