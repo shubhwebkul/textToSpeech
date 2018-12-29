@@ -64,6 +64,7 @@
         // clear speaking lady before loading the page
         speechSynthesis.cancel();
 
+        // show and hide buttons on the basis of click and dbl click
         document.addEventListener('click', event => {
             event = event || window.target;
             event.preventDefault();
@@ -89,6 +90,18 @@
                 onTextSelection();
             } else {
                 onTextNotSelected();
+            }
+        });
+
+        // play and pause using space buttons support
+        document.addEventListener('keypress', event => {
+            if (event.keyCode == 32) {
+                if (speechSynthesis.speaking && !speechSynthesis.paused)
+                    pauseLady();
+                else if (speechSynthesis.paused)
+                    resumeLady();
+                else
+                    speakLady();
             }
         });
 
@@ -159,7 +172,7 @@
                 'stopBtn': "unset",
                 'resumeBtn': "none",
             })
-            showAlert({'action': 'success', message: "Playing", isRemove: true});
+            // showAlert({'action': 'success', message: "Playing", isRemove: true});
         }
 
         // addeventlistner on completing the text speech
@@ -170,7 +183,7 @@
                 'stopBtn': "none",
                 'resumeBtn': "none",
             })
-            showAlert({'action': 'success', message: "Completed", isRemove: true});
+            // showAlert({'action': 'success', message: "Completed", isRemove: true});
         }
     };
 
@@ -185,7 +198,7 @@
             'stopBtn': "none",
             'resumeBtn': "none",
         })
-        showAlert({'action': 'error', message: "You stopped TextToSpeech", isRemove: true});
+        // showAlert({'action': 'error', message: "You stopped TextToSpeech", isRemove: true});
 
         speechSynthesis.cancel();
     };
@@ -201,7 +214,7 @@
             'stopBtn': "unset",
             'resumeBtn': "unset",
         })
-        showAlert({'action': 'success', message: "You just paused textToSpeech", isRemove: true});
+        // showAlert({'action': 'success', message: "You just paused textToSpeech", isRemove: true});
         
         speechSynthesis.pause();
     };
@@ -217,7 +230,7 @@
             'stopBtn': "unset",
             'resumeBtn': "none",
         })
-        showAlert({'action': 'success', message: "textToSpeech started again", isRemove: true});
+        // showAlert({'action': 'success', message: "textToSpeech started again", isRemove: true});
 
         speechSynthesis.resume();
     };
@@ -241,7 +254,7 @@
             document.execCommand('copy');
             targetField.removeChild(textArea);
 
-            showAlert({'action': 'success', message: "Text Copied", isRemove: true});
+            // showAlert({'action': 'success', message: "Text Copied", isRemove: true});
         }
     }
 
